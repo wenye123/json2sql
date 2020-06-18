@@ -1,0 +1,63 @@
+{
+  "name": "@wenye123/json2sql",
+  "version": "1.0.0",
+  "description": "用json方式写sql",
+  "keywords": [
+    "typescript",
+    "sql",
+    "json",
+    "json2sql",
+    "generate-wenye"
+  ],
+  "author": "wenye123<1583247975@qq.com>",
+  "license": "ISC",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "format": "prettier --write \"./{src,benchmark,test}/**/*.{js,ts,json,yaml}\"",
+    "compile": "rm -rf dist && tsc",
+    "prepublish": "npm run compile",
+    "test": "npm run format && mocha test/test-*.ts",
+    "test:cov": "nyc mocha test/test-*.ts"
+  },
+  "nyc": {
+    "all": true,
+    "extension": [
+      ".ts"
+    ],
+    "include": [
+      "src"
+    ],
+    "reporter": [
+      "text",
+      "text-summary",
+      "lcov"
+    ],
+    "exclude": [
+      "**/*.d.ts"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wenye123/json2sql.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wenye123/json2sql/issues"
+  },
+  "homepage": "https://github.com/wenye123/json2sql#readme",
+  "devDependencies": {
+    "@types/chai": "^4.2.11",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^14.0.13",
+    "chai": "^4.2.0",
+    "coveralls": "^3.1.0",
+    "mocha": "^8.0.1",
+    "nyc": "^15.1.0",
+    "prettier": "^2.0.5",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.5"
+  }
+}
