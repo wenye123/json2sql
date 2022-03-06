@@ -174,6 +174,4 @@ describe("genSql", function () {
       assert.match(sql, new RegExp("myisam"));
     });
   });
-
-
 });
