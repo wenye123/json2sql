@@ -6,8 +6,7 @@
     "typescript",
     "sql",
     "json",
-    "json2sql",
-    "generate-wenye"
+    "json2sql"
   ],
   "author": "wenye123<1583247975@qq.com>",
   "license": "ISC",
@@ -51,7 +50,6 @@
   "devDependencies": {
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
-    "@types/mysql2": "github:types/mysql2",
     "@types/node": "^14.0.13",
     "chai": "^4.2.0",
     "coveralls": "^3.1.0",
@@ -63,7 +61,7 @@
     "typescript": "^3.9.5"
   },
   "dependencies": {
-    "mysql2": "^2.1.0"
+    "mysql2": "^3.6.1"
   },
   "config": {
     "commitizen": {

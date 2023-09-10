@@ -1,6 +1,6 @@
 import { JTable, SqlGenerator } from "./sqlGenerator";
-import mysql, { ConnectionOptions } from "mysql2";
-import { Connection } from "mysql2/promise";
+import mysql from "mysql2";
+import { Connection, ConnectionOptions } from "mysql2/promise";
 import fs from "fs";
 import path from "path";
 import { promisify } from "util";
