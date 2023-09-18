@@ -70,8 +70,8 @@ export class Json2Sql {
     if (this.isLog) console.log(...args);
   }
 
-  /** 输出sql文件 */
-  private async outputSql() {
+  /** 从数据库中输出sql文件 */
+  private async outputSqlFromDatabase() {
     const sqlName = `${this.tablePrefix.split("_")[0]}.sql`;
     const sqlPath = path.resolve(this.outputDir, sqlName);
     let str = "";
@@ -92,21 +92,33 @@ export class Json2Sql {
     await writeFilePs(sqlPath, str);
   }
 
+  /** 获取生成的sql */
+  async getGenSql(tables: Record<string, JTable>) {
+    let str = "";
+    // 获取sql内容
+    for (let key of Object.keys(tables)) {
+      const table = tables[key];
+      const { sql } = new SqlGenerator({ tablePrefix: this.tablePrefix, tableName: key, table }).genSql();
+      str += `${sql}\n\n`;
+    }
+    return str;
+  }
+
   /** 同步表 */
   async syncTable(tables: Record<string, JTable>) {
     for (let key of Object.keys(tables)) {
       const table = tables[key];
-      const tableName = `${this.tablePrefix}${key}`;
-      const { sql } = new SqlGenerator({ tableName, table }).genSql();
+      const fullTableName = `${this.tablePrefix}${key}`;
+      const { sql } = new SqlGenerator({ tablePrefix: this.tablePrefix, tableName: key, table }).genSql();
       if (this.isSync) {
-        await this.conn.query(`DROP TABLE IF EXISTS ${tableName};`);
-        this.printLog(`删除表${tableName}`);
+        await this.conn.query(`DROP TABLE IF EXISTS ${fullTableName};`);
+        this.printLog(`删除表${fullTableName}`);
       }
       await this.conn.query(sql);
-      this.printLog(`生成表${tableName}`);
+      this.printLog(`生成表${fullTableName}`);
     }
     // 输出文件
-    await this.outputSql();
+    await this.outputSqlFromDatabase();
     // 关闭mysql连接
     await this.conn.destroy();
   }

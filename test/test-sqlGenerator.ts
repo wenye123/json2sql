@@ -2,9 +2,12 @@ import { SqlGenerator, JTable } from "../src/sqlGenerator";
 import { assert } from "chai";
 import { getMysqlConn } from "./util";
 
-const tableName = "test_table";
+const tablePrefix = "test_";
+const tableName = "table";
+const fullTableName = `${tablePrefix}${tableName}`;
 function genSql(table: JTable) {
   const { sql } = new SqlGenerator({
+    tablePrefix,
     tableName,
     table: table,
   }).genSql();
@@ -14,7 +17,7 @@ function genSql(table: JTable) {
 let sql = "";
 async function validSql() {
   const { conn, destroyConn } = await getMysqlConn();
-  await conn.query(`DROP TABLE IF EXISTS ${tableName};`);
+  await conn.query(`DROP TABLE IF EXISTS ${fullTableName};`);
   await conn.query(sql);
   await destroyConn();
 }
@@ -27,14 +30,12 @@ describe("genSql", function () {
         comment: "测试表",
         fields: {
           a: { type: "enum", comment: "aa" },
-          b: { type: "enum", comment: "bb", signed: true },
           c: { type: "enum", comment: "cc", isNull: true },
           d: { type: "enum", comment: "dd", default: 10 },
           e: { type: "enum", comment: "ee", default: null },
         },
       });
       assert.match(sql, new RegExp("`a` tinyint\\(1\\) unsigned NOT NULL DEFAULT 0 COMMENT 'aa'"));
-      assert.match(sql, new RegExp("`b` tinyint\\(1\\) NOT NULL DEFAULT 0 COMMENT 'bb'"));
       assert.match(sql, new RegExp("`c` tinyint\\(1\\) unsigned NULL DEFAULT 0 COMMENT 'cc'"));
       assert.match(sql, new RegExp("`d` tinyint\\(1\\) unsigned NOT NULL DEFAULT 10 COMMENT 'dd'"));
       assert.match(sql, new RegExp("`e` tinyint\\(1\\) unsigned NOT NULL COMMENT 'ee'"));

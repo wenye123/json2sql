@@ -22,12 +22,10 @@ export interface JTableField {
     | JTableFieldCustom;
 }
 export type JTableFieldEnum = {
-  /** 枚举/布尔类型 */
+  /** 枚举/布尔类型(非真实mysql enum类型而是tinyinit的模拟 最多支持0-9) */
   type: "enum";
   /** 注释 */
   comment: string;
-  /** 是否有符号，默认false */
-  signed?: boolean;
   /** 是否为null，默认false */
   isNull?: boolean;
   /** 默认值，默认为0 */
@@ -127,6 +125,8 @@ export type JTableNormalIndex = {
 
 /** sql生成器选项 */
 export interface SqlGeneratorOpt {
+  /** 表前缀 */
+  tablePrefix: string;
   /** 表名字 */
   tableName: string;
   /** 表json结构 */
@@ -149,13 +149,13 @@ function getDefFieldVal<U>(val: any, defVal: U): U {
 /** sql生成器 */
 export class SqlGenerator {
   /** 全表名 */
-  private tableName = "";
+  private fullTableName = "";
   /** json描述的表 */
   private table: JTable;
 
   constructor(opt: SqlGeneratorOpt) {
     const primaryId = `${opt.tableName}_id`;
-    this.tableName = opt.tableName;
+    this.fullTableName = `${opt.tablePrefix}${opt.tableName}`;
     this.table = {
       comment: opt.table.comment,
       fields: {
@@ -205,13 +205,12 @@ export class SqlGenerator {
       if (field.type === "enum") {
         field = {
           ...field,
-          signed: getDefFieldVal(field.signed, false),
           isNull: getDefFieldVal(field.isNull, false),
           default: getDefFieldVal(field.default, 0),
         };
         sql = serializeSql([
           `\`${fieldName}\` tinyint(1)`,
-          `${field.signed ? "" : "unsigned"}`,
+          `unsigned`,
           `${field.isNull ? "" : "NOT"} NULL`,
           `${field.default === null ? "" : `DEFAULT ${field.default}`}`,
           `COMMENT '${field.comment}'`,
@@ -331,7 +330,7 @@ export class SqlGenerator {
     // 生成其他(表名字，引擎，注释)
     const content = [...fieldSqlArr, ...indexSqlArr];
     const engine = this.table.isMyisam ? "myisam" : "innodb";
-    const sql = `CREATE TABLE \`${this.tableName}\` (\n  ${content.join(",\n  ")} \n) ENGINE=${engine} COMMENT='${
+    const sql = `CREATE TABLE \`${this.fullTableName}\` (\n  ${content.join(",\n  ")} \n) ENGINE=${engine} COMMENT='${
       this.table.comment
     }';`;
     return { sql, jTable: this.table };

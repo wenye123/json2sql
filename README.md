@@ -23,8 +23,11 @@ const json2Sql = new Json2Sql({
   mysql: mysqlConf,
   tablePrefix: "test_", // 表前缀
   outputDir: "../test/tmp", // 指定输出sql的目录
+  isSync: true, // 是否同步表结构
+  isLog: true, // 是否打印日志
 });
 
+// 同步表 先将json格式的表同步到数据库 再将表导出sql到输出目录
 await json2Sql.syncTable({
   user: {
     comment: "用户表",
