@@ -45,3 +45,15 @@ await json2Sql.syncTable({
   },
 });
 ```
+
+```sql 
+# 需要注意的是 生成每张表都会自动加上主键 创建时间 更新时间三个字段
+CREATE TABLE `test_user` (
+  `user_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `name` varchar(40) NOT NULL DEFAULT '' COMMENT '用户名',
+  `age` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '年龄',
+  `update_time` datetime NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`user_id`) 
+) ENGINE=innodb COMMENT='用户表';
+```
