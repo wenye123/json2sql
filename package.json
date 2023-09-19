@@ -15,6 +15,10 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "format": "prettier --write \"./{src,benchmark,test}/**/*.{js,ts,json,yaml}\"",
     "compile": "rm -rf dist && tsc",
