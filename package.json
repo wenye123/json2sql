@@ -1,6 +1,6 @@
 {
   "name": "@wenye123/json2sql",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "用json方式写sql",
   "keywords": [
     "typescript",
