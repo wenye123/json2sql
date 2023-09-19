@@ -1,6 +1,6 @@
 {
   "name": "@wenye123/json2sql",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "用json方式写sql",
   "keywords": [
     "typescript",
@@ -22,7 +22,7 @@
   "scripts": {
     "format": "prettier --write \"./{src,benchmark,test}/**/*.{js,ts,json,yaml}\"",
     "compile": "rm -rf dist && tsc",
-    "prepublish": "npm run compile",
+    "prepublish": "npm run test && npm run compile",
     "test": "npm run format && mocha test/test-*.ts",
     "test:cov": "nyc mocha test/test-*.ts"
   },

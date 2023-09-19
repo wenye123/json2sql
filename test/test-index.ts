@@ -30,7 +30,7 @@ describe("json2sql", function () {
     const json2Sql = new Json2Sql({
       mysql: mysqlConf,
       tablePrefix: "test_",
-      outputDir: "../test/tmp",
+      outputDir: "./test/tmp",
     });
 
     const sql = await json2Sql.getGenSql({
@@ -64,7 +64,7 @@ describe("json2sql", function () {
     const json2Sql = new Json2Sql({
       mysql: mysqlConf,
       tablePrefix: "test_",
-      outputDir: "../test/tmp",
+      outputDir: "./test/tmp",
     });
 
     await json2Sql.syncTable({

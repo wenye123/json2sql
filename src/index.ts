@@ -58,7 +58,7 @@ export class Json2Sql {
     this.mysqlConf = opt.mysql;
     this.tablePrefix = opt.tablePrefix;
     this.conn = mysql.createConnection(opt.mysql).promise();
-    this.outputDir = path.resolve(__dirname, opt.outputDir);
+    this.outputDir = opt.outputDir;
     this.isSync = opt.isSync || true;
     this.isLog = opt.isLog || true;
     // 生成输出目录
