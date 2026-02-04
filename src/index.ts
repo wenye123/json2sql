@@ -46,20 +46,20 @@ export class Json2Sql {
   /** 数据库配置 */
   private mysqlConf: ConnectionOptions;
   /** 表前缀 */
-  private tablePrefix: string;
+  public tablePrefix: string;
   /** 输出目录 */
-  private outputDir: string;
-  /** 是否同步表结构 */
-  private isSync: boolean;
+  public outputDir: string;
+  /** 是否同步表结构: true表示表名存在时候是否先删除再创建 false则跳过不做操作 */
+  public isSync: boolean;
   /** 是否打印日志 */
-  private isLog: boolean;
+  public isLog: boolean;
 
   constructor(opt: Json2SqlOpt) {
     this.mysqlConf = opt.mysql;
     this.tablePrefix = opt.tablePrefix;
     this.conn = mysql.createConnection(opt.mysql).promise();
     this.outputDir = opt.outputDir;
-    this.isSync = opt.isSync || true;
+    this.isSync = opt.isSync !== false;
     this.isLog = opt.isLog || true;
     // 生成输出目录
     ensureDir(this.outputDir);
@@ -109,11 +109,15 @@ export class Json2Sql {
     for (let key of Object.keys(tables)) {
       const table = tables[key];
       const fullTableName = `${this.tablePrefix}${key}`;
-      const { sql } = new SqlGenerator({ tablePrefix: this.tablePrefix, tableName: key, table }).genSql();
-      if (this.isSync) {
+      // 当表已经存在时 根据isSync决定是否删除再创建
+      const [exists]: any = await this.conn.query(`SHOW TABLES LIKE '${fullTableName}';`);
+      if (exists.length > 0) {
+        if (!this.isSync) return this.printLog(`创建失败，表${fullTableName}已存在`);
         await this.conn.query(`DROP TABLE IF EXISTS ${fullTableName};`);
         this.printLog(`删除表${fullTableName}`);
       }
+      // 生成表
+      const { sql } = new SqlGenerator({ tablePrefix: this.tablePrefix, tableName: key, table }).genSql();
       await this.conn.query(sql);
       this.printLog(`生成表${fullTableName}`);
     }

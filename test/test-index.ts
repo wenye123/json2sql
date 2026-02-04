@@ -52,7 +52,7 @@ describe("json2sql", function () {
           \`age\` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '年龄',
           \`update_time\` datetime NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
           \`create_time\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-          PRIMARY KEY (\`user_id\`) 
+          PRIMARY KEY (\`user_id\`)
         ) ENGINE=innodb COMMENT='用户表';
       `
         .replaceAll(/\\n/g, "")
@@ -65,6 +65,7 @@ describe("json2sql", function () {
       mysql: mysqlConf,
       tablePrefix: "test_",
       outputDir: "./test/tmp",
+      isSync: true,
     });
 
     await json2Sql.syncTable({
@@ -86,5 +87,26 @@ describe("json2sql", function () {
 
     const content = fs.readFileSync(path.resolve(__dirname, "../test/tmp/test.sql")).toString();
     assert.isNotEmpty(content);
+  });
+
+  it("syncTable isSync false", async function () {
+    const json2Sql = new Json2Sql({
+      mysql: mysqlConf,
+      tablePrefix: "test_",
+      outputDir: "./test/tmp",
+      isSync: false,
+    });
+
+    await json2Sql.syncTable({
+      user: {
+        comment: "用户表",
+        fields: {
+          name: { type: "string", length: 40, comment: "用户名" },
+        },
+      },
+    });
+
+    const res = fs.existsSync(path.resolve(__dirname, "../test/tmp/test.sql"));
+    assert.isFalse(res);
   });
 });
